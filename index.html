@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpookyCraft by Awsy</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#100d18;color:#f6f0ff;font-family:Arial,sans-serif;padding:18px}
+main{max-width:760px;margin:auto}
+h1{color:#c49aff}
+.card{background:#1e182a;padding:17px;border:1px solid #403151;border-radius:15px;margin:15px 0}
+textarea,input,select{width:100%;padding:12px;margin:7px 0 14px;background:#110e19;color:white;border:1px solid #59446f;border-radius:8px;font-size:16px}
+textarea{min-height:180px}
+button{padding:13px;border:0;border-radius:9px;background:#bd8cff;color:#180d23;font-weight:bold;margin:5px 0;cursor:pointer}
+button:disabled{opacity:.5}
+.full{width:100%}
+#log{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font-size:14px}
+progress{width:100%;accent-color:#bd8cff}
+small{color:#c1b6ce}
+</style>
+</head>
+<body>
+<main>
+<h1>👻 SpookyCraft</h1>
+<p>Mod Downloader by Awsy</p>
+<p>Paste mod names, find compatible files, and package them into one ZIP.</p>
+
+<div class="card">
+<label for="names">Mod names — one per line</label>
+<textarea id="names" placeholder="Sodium&#10;Lithium&#10;FerriteCore&#10;ImmediatelyFast&#10;Entity Culling&#10;Litematica&#10;MaLiLib"></textarea>
+
+<label for="mc">Minecraft version</label>
+<select id="mc">
+<option>1.21.11</option>
+<option>1.21.10</option>
+<option>1.21.8</option>
+<option>1.21.1</option>
+</select>
+
+<label for="loader">Mod loader</label>
+<select id="loader">
+<option value="fabric">Fabric</option>
+<option value="forge">Forge</option>
+<option value="neoforge">NeoForge</option>
+<option value="quilt">Quilt</option>
+</select>
+
+<label for="filename">ZIP filename</label>
+<input id="filename" value="SpookyCraft_Build_It_1.21.11_Fabric.zip">
+
+<button id="search" class="full">🔍 Search compatible mods</button>
+<button id="download" class="full" disabled>📦 Download all as ZIP</button>
+<button id="clear" class="full">Clear list</button>
+</div>
+
+<div class="card">
+<h3>Download progress</h3>
+<progress id="progress" value="0" max="100"></progress>
+<p id="count">Waiting for mod names...</p>
+<div id="log">Ready.</div>
+</div>
+<small>Uses the public Modrinth API. Browser download restrictions may prevent some files from downloading.</small>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let found = [];
+
+function say(s) {
+  $("log").textContent += "\n" + s;
+}
+
+function slug(s) {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function uniqueNames() {
+  return [...new Set($("names").value.split(/\r?\n/)
+    .map(x => x.trim()).filter(Boolean))];
+}
+
+function safeName(s) {
+  return s.replace(/[<>:"/\\|?*\x00-\x1f]/g, "_");
+}
+
+$("clear").onclick = () => {
+  $("names").value = "";
+  $("log").textContent = "Ready.";
+  $("count").textContent = "Waiting for mod names...";
+  $("progress").value = 0;
+  found = [];
+  $("download").disabled = true;
+};
+
+$("search").onclick = async () => {
+  const names = uniqueNames();
+  if (!names.length) {
+    alert("Paste mod names first!");
+    return;
+  }
+
+  found = [];
+  $("log").textContent = "";
+  $("progress").value = 0;
+  $("search").disabled = true;
+  $("download").disabled = true;
+
+  const mc = $("mc").value;
+  const loader = $("loader").value;
+
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    $("count").textContent = `Searching ${i+1}/${names.length}: ${name}`;
+
+    try {
+      const params = new URLSearchParams({
+        query: name,
+        limit: "15",
+        facets: JSON.stringify([
+          ["project_type:mod"],
+          [`versions:${mc}`],
+          [`categories:${loader}`]
+        ])
+      });
+
+      const r = await fetch("https://api.modrinth.com/v2/search?" + params);
+      if (!r.ok) throw Error("Search failed: HTTP " + r.status);
+      const data = await r.json();
+
+      const candidates = (data.hits || []).filter(p =>
+        p.project_type === "mod" &&
+        p.versions?.includes(mc) &&
+        p.categories?.includes(loader)
+      );
+
+      candidates.sort((a,b) =>
+        Number(slug(b.title) === slug(name)) -
+        Number(slug(a.title) === slug(name))
+      );
+
+      if (!candidates.length) {
+        say("SKIPPED: " + name + " — no compatible search result.");
+        continue;
+      }
+
+      const project = candidates[0];
+      const vr = await fetch(
+        `https://api.modrinth.com/v2/project/${project.project_id}/version`
+      );
+      if (!vr.ok) throw Error("Version lookup failed");
+      const versions = await vr.json();
+
+      const release = versions.find(v =>
+        v.version_type === "release" &&
+        v.game_versions.includes(mc) &&
+        v.loaders.includes(loader)
+      );
+
+      if (!release) {
+        say("SKIPPED: " + name + " — no matching release.");
+        continue;
+      }
+
+      const file = release.files.find(f =>
+        f.primary && f.filename.toLowerCase().endsWith(".jar")
+      ) || release.files.find(f =>
+        f.filename.toLowerCase().endsWith(".jar")
+      );
+
+      if (!file) {
+        say("SKIPPED: " + name + " — no JAR file.");
+        continue;
+      }
+
+      found.push({
+        name: project.title,
+        version: release.version_number,
+        filename: file.filename,
+        url: file.url,
+        dependencies: release.dependencies || []
+      });
+
+      say("FOUND: " + project.title + " — " + release.version_number);
+    } catch (e) {
+      say("ERROR: " + name + " — " + e.message);
+    }
+
+    $("progress").value = (i + 1) / names.length * 100;
+  }
+
+  $("count").textContent = `Found ${found.length} mod files from ${names.length} names.`;
+  $("download").disabled = found.length === 0;
+  $("search").disabled = false;
+};
+
+$("download").onclick = async () => {
+  if (!found.length) return;
+  if (typeof JSZip === "undefined") {
+    alert("ZIP library failed to load. Check your internet.");
+    return;
+  }
+
+  $("download").disabled = true;
+  $("search").disabled = true;
+  const zip = new JSZip();
+  const folder = zip.folder("mods");
+  const readme = [
+    "SpookyCraft Mod Collection by Awsy",
+    "Minecraft: " + $("mc").value,
+    "Loader: " + $("loader").value,
+    "",
+    "Files:"
+  ];
+
+  const used = new Set();
+  let ok = 0;
+
+  for (let i = 0; i < found.length; i++) {
+    const m = found[i];
+    $("count").textContent = `Downloading ${i+1}/${found.length}: ${m.name}`;
+
+    try {
+      const r = await fetch(m.url);
+      if (!r.ok) throw Error("HTTP " + r.status);
+      const blob = await r.blob();
+      if (blob.size < 100) throw Error("File too small");
+
+      let filename = safeName(m.filename);
+      if (used.has(filename)) {
+        filename = m.name.replace(/[^a-z0-9_-]/gi, "_") + "_" + filename;
+      }
+      used.add(filename);
+      folder.file(filename, blob);
+      readme.push(`${m.name} ${m.version}: ${filename}`);
+      ok++;
+      say("DOWNLOADED: " + m.name);
+    } catch (e) {
+      readme.push(`FAILED: ${m.name}: ${e.message}`);
+      say("DOWNLOAD FAILED: " + m.name + " — " + e.message);
+    }
+
+    $("progress").value = (i + 1) / found.length * 100;
+  }
+
+  if (!ok) {
+    alert("No JAR files downloaded. The browser may be blocking file downloads. A backend is needed.");
+    $("search").disabled = false;
+    $("download").disabled = false;
+    return;
+  }
+
+  zip.file("README.txt", readme.join("\n"));
+  $("count").textContent = "Creating ZIP...";
+
+  try {
+    const blob = await zip.generateAsync({
+      type: "blob",
+      compression: "DEFLATE",
+      compressionOptions: {level: 2}
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = safeName($("filename").value || "SpookyCraft.zip");
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    $("count").textContent = `ZIP created with ${ok} JAR files.`;
+    say("ZIP download started.");
+  } catch (e) {
+    alert("ZIP creation failed: " + e.message);
+  }
+
+  $("search").disabled = false;
+  $("download").disabled = false;
+};
+</script>
+</body>
+  </html>
+  
