@@ -1,284 +1,44 @@
-
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SpookyCraft by Awsy</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SpookyCraft Mod Downloader</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#100d18;color:#f6f0ff;font-family:Arial,sans-serif;padding:18px}
-main{max-width:760px;margin:auto}
-h1{color:#c49aff}
-.card{background:#1e182a;padding:17px;border:1px solid #403151;border-radius:15px;margin:15px 0}
-textarea,input,select{width:100%;padding:12px;margin:7px 0 14px;background:#110e19;color:white;border:1px solid #59446f;border-radius:8px;font-size:16px}
-textarea{min-height:180px}
-button{padding:13px;border:0;border-radius:9px;background:#bd8cff;color:#180d23;font-weight:bold;margin:5px 0;cursor:pointer}
-button:disabled{opacity:.5}
-.full{width:100%}
-#log{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font-size:14px}
-progress{width:100%;accent-color:#bd8cff}
-small{color:#c1b6ce}
-</style>
-</head>
+:root{color-scheme:dark;--bg:#101116;--panel:#1a1c25;--line:#303342;--text:#f5f5f7;--muted:#a9adbd;--accent:#ffb52e;--orange:#ff7b27}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#302238,#101116 58%);font-family:system-ui,sans-serif;color:var(--text);min-height:100vh}
+header{text-align:center;padding:32px 14px 20px}.logo{width:68px;height:68px;margin:auto auto 12px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(140deg,var(--accent),var(--orange));color:#211509;font-size:36px;font-weight:950}h1{margin:0;font-size:clamp(26px,5vw,42px)}h1 span{color:var(--accent)}header p{color:var(--muted);max-width:650px;margin:10px auto}
+main{width:min(950px,calc(100% - 24px));margin:auto auto 45px}.panel{background:#1a1c25ed;border:1px solid var(--line);border-radius:18px;padding:17px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:7px}.field label{font-size:13px;font-weight:700;color:#d5d7e1}
+input,select{width:100%;min-width:0;border:1px solid #3b3e50;background:#11131a;color:var(--text);padding:12px;border-radius:11px;font:inherit}button{border:0;border-radius:11px;padding:12px 15px;background:linear-gradient(120deg,var(--accent),var(--orange));color:#241608;font:inherit;font-weight:900;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+.sources{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.source{background:#11131a;color:var(--text);border:1px solid var(--line)}.source.active{border-color:var(--accent);background:#ffb52e16;color:var(--accent)}.searchbar{display:flex;gap:9px;margin-top:14px}.searchbar input{flex:1}.hint,.status{font-size:13px;color:var(--muted);line-height:1.6}.status{margin-top:12px}.results-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.results{display:grid;gap:10px;margin-top:14px}.result{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:13px;background:#11131a}.result img{width:46px;height:46px;border-radius:10px;object-fit:cover;background:#242631}.meta{flex:1;min-width:0}.result h3{font-size:15px;margin:0 0 4px;overflow-wrap:anywhere}.result p{font-size:12px;color:var(--muted);margin:0;line-height:1.5}.result a{color:var(--accent);font-size:12px;text-decoration:none}.result input[type=checkbox]{width:19px;height:19px;accent-color:var(--accent);flex:0 0 auto}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:3px 8px;font-size:11px;margin:4px 3px 0 0}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.secondary{background:#292c39;color:var(--text);border:1px solid var(--line)}.empty{text-align:center;padding:25px;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:12px;padding:0 15px 25px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.panel{padding:13px}.searchbar{flex-direction:column}.result{align-items:flex-start}.result img{width:40px;height:40px}}
+</style></head>
 <body>
+<header><div class="logo">S</div><h1><span>SpookyCraft</span> Mod Downloader</h1><p>ابحث عن مودات Minecraft حسب المصدر وإصدار اللعبة والـLoader، وحدد المودات واحفظ قائمة بها.</p></header>
 <main>
-<h1>👻 SpookyCraft</h1>
-<p>Mod Downloader by Awsy</p>
-<p>Paste mod names, find compatible files, and package them into one ZIP.</p>
-
-<div class="card">
-<label for="names">Mod names — one per line</label>
-<textarea id="names" placeholder="Sodium&#10;Lithium&#10;FerriteCore&#10;ImmediatelyFast&#10;Entity Culling&#10;Litematica&#10;MaLiLib"></textarea>
-
-<label for="mc">Minecraft version</label>
-<select id="mc">
-<option>1.21.11</option>
-<option>1.21.10</option>
-<option>1.21.8</option>
-<option>1.21.1</option>
-</select>
-
-<label for="loader">Mod loader</label>
-<select id="loader">
-<option value="fabric">Fabric</option>
-<option value="forge">Forge</option>
-<option value="neoforge">NeoForge</option>
-<option value="quilt">Quilt</option>
-</select>
-
-<label for="filename">ZIP filename</label>
-<input id="filename" value="SpookyCraft_Build_It_1.21.11_Fabric.zip">
-
-<button id="search" class="full">🔍 Search compatible mods</button>
-<button id="download" class="full" disabled>📦 Download all as ZIP</button>
-<button id="clear" class="full">Clear list</button>
-</div>
-
-<div class="card">
-<h3>Download progress</h3>
-<progress id="progress" value="0" max="100"></progress>
-<p id="count">Waiting for mod names...</p>
-<div id="log">Ready.</div>
-</div>
-<small>Uses the public Modrinth API. Browser download restrictions may prevent some files from downloading.</small>
-</main>
-
+<section class="panel">
+<div class="sources"><button class="source active" id="mr" type="button">Modrinth</button><button class="source" id="cf" type="button">CurseForge</button></div>
+<div class="grid">
+<div class="field"><label for="version">إصدار Minecraft</label><input id="version" list="versions" value="1.21.11" placeholder="مثال 1.21.11"><datalist id="versions"><option>1.21.11</option><option>1.21.10</option><option>1.21.8</option><option>1.21.5</option><option>1.20.1</option><option>1.19.2</option></datalist></div>
+<div class="field"><label for="loader">Mod Loader</label><select id="loader"><option value="fabric">Fabric</option><option value="forge">Forge</option><option value="neoforge">NeoForge</option><option value="quilt">Quilt</option><option value="any">الكل / غير محدد</option></select></div></div>
+<div class="searchbar"><input id="query" placeholder="اسم المود مثل Sodium أو Jade"><button id="search">بحث</button></div><div id="status" class="status">اختار المصدر وإصدار اللعبة ثم ابحث.</div><p class="hint" id="hint">Modrinth يعمل مباشرةً باستخدام API العام.</p>
+</section>
+<section class="panel"><div class="results-head"><strong>نتائج البحث</strong><span id="count" class="hint">0 نتيجة</span></div><div id="results" class="results"><div class="empty">نتائج البحث تظهر هنا.</div></div><div class="actions"><button id="open" disabled>فتح صفحات المحددة</button><button id="export" class="secondary" disabled>تصدير قائمة الأسماء</button><button id="clear" class="secondary">مسح التحديد</button></div><p class="hint">التنزيل يفتح صفحة المشروع الرسمية. الموقع لا يتجاوز صلاحيات المؤلفين ولا يضمّن مفاتيح سرية.</p></section>
+<section class="panel" id="cfBox" hidden><strong>ربط CurseForge</strong><p class="hint">CurseForge API يحتاج مفتاحاً معتمداً. لا تضع المفتاح داخل index.html العام. اربط الموقع بوسيط آمن مثل Cloudflare Worker يخزن المفتاح كـ Secret.</p><div class="field"><label for="proxy">رابط Worker الوسيط</label><input id="proxy" type="url" placeholder="https://your-worker.example.workers.dev/search"></div><p class="hint">الوسيط يستقبل query وgameVersion وloader ويعيد JSON بالشكل {data:[{id,name,summary,logo:{url},links:{website},downloadCount}]}. لازم يطبّق فلاتر اللعبة والـLoader باستخدام API الرسمي.</p></section>
+</main><footer>SpookyCraft by Awsy</footer>
 <script>
-const $ = id => document.getElementById(id);
-let found = [];
-
-function say(s) {
-  $("log").textContent += "\n" + s;
-}
-
-function slug(s) {
-  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
-
-function uniqueNames() {
-  return [...new Set($("names").value.split(/\r?\n/)
-    .map(x => x.trim()).filter(Boolean))];
-}
-
-function safeName(s) {
-  return s.replace(/[<>:"/\\|?*\x00-\x1f]/g, "_");
-}
-
-$("clear").onclick = () => {
-  $("names").value = "";
-  $("log").textContent = "Ready.";
-  $("count").textContent = "Waiting for mod names...";
-  $("progress").value = 0;
-  found = [];
-  $("download").disabled = true;
-};
-
-$("search").onclick = async () => {
-  const names = uniqueNames();
-  if (!names.length) {
-    alert("Paste mod names first!");
-    return;
-  }
-
-  found = [];
-  $("log").textContent = "";
-  $("progress").value = 0;
-  $("search").disabled = true;
-  $("download").disabled = true;
-
-  const mc = $("mc").value;
-  const loader = $("loader").value;
-
-  for (let i = 0; i < names.length; i++) {
-    const name = names[i];
-    $("count").textContent = `Searching ${i+1}/${names.length}: ${name}`;
-
-    try {
-      const params = new URLSearchParams({
-        query: name,
-        limit: "15",
-        facets: JSON.stringify([
-          ["project_type:mod"],
-          [`versions:${mc}`],
-          [`categories:${loader}`]
-        ])
-      });
-
-      const r = await fetch("https://api.modrinth.com/v2/search?" + params);
-      if (!r.ok) throw Error("Search failed: HTTP " + r.status);
-      const data = await r.json();
-
-      const candidates = (data.hits || []).filter(p =>
-        p.project_type === "mod" &&
-        p.versions?.includes(mc) &&
-        p.categories?.includes(loader)
-      );
-
-      candidates.sort((a,b) =>
-        Number(slug(b.title) === slug(name)) -
-        Number(slug(a.title) === slug(name))
-      );
-
-      if (!candidates.length) {
-        say("SKIPPED: " + name + " — no compatible search result.");
-        continue;
-      }
-
-      const project = candidates[0];
-      const vr = await fetch(
-        `https://api.modrinth.com/v2/project/${project.project_id}/version`
-      );
-      if (!vr.ok) throw Error("Version lookup failed");
-      const versions = await vr.json();
-
-      const release = versions.find(v =>
-        v.version_type === "release" &&
-        v.game_versions.includes(mc) &&
-        v.loaders.includes(loader)
-      );
-
-      if (!release) {
-        say("SKIPPED: " + name + " — no matching release.");
-        continue;
-      }
-
-      const file = release.files.find(f =>
-        f.primary && f.filename.toLowerCase().endsWith(".jar")
-      ) || release.files.find(f =>
-        f.filename.toLowerCase().endsWith(".jar")
-      );
-
-      if (!file) {
-        say("SKIPPED: " + name + " — no JAR file.");
-        continue;
-      }
-
-      found.push({
-        name: project.title,
-        version: release.version_number,
-        filename: file.filename,
-        url: file.url,
-        dependencies: release.dependencies || []
-      });
-
-      say("FOUND: " + project.title + " — " + release.version_number);
-    } catch (e) {
-      say("ERROR: " + name + " — " + e.message);
-    }
-
-    $("progress").value = (i + 1) / names.length * 100;
-  }
-
-  $("count").textContent = `Found ${found.length} mod files from ${names.length} names.`;
-  $("download").disabled = found.length === 0;
-  $("search").disabled = false;
-};
-
-$("download").onclick = async () => {
-  if (!found.length) return;
-  if (typeof JSZip === "undefined") {
-    alert("ZIP library failed to load. Check your internet.");
-    return;
-  }
-
-  $("download").disabled = true;
-  $("search").disabled = true;
-  const zip = new JSZip();
-  const folder = zip.folder("mods");
-  const readme = [
-    "SpookyCraft Mod Collection by Awsy",
-    "Minecraft: " + $("mc").value,
-    "Loader: " + $("loader").value,
-    "",
-    "Files:"
-  ];
-
-  const used = new Set();
-  let ok = 0;
-
-  for (let i = 0; i < found.length; i++) {
-    const m = found[i];
-    $("count").textContent = `Downloading ${i+1}/${found.length}: ${m.name}`;
-
-    try {
-      const r = await fetch(m.url);
-      if (!r.ok) throw Error("HTTP " + r.status);
-      const blob = await r.blob();
-      if (blob.size < 100) throw Error("File too small");
-
-      let filename = safeName(m.filename);
-      if (used.has(filename)) {
-        filename = m.name.replace(/[^a-z0-9_-]/gi, "_") + "_" + filename;
-      }
-      used.add(filename);
-      folder.file(filename, blob);
-      readme.push(`${m.name} ${m.version}: ${filename}`);
-      ok++;
-      say("DOWNLOADED: " + m.name);
-    } catch (e) {
-      readme.push(`FAILED: ${m.name}: ${e.message}`);
-      say("DOWNLOAD FAILED: " + m.name + " — " + e.message);
-    }
-
-    $("progress").value = (i + 1) / found.length * 100;
-  }
-
-  if (!ok) {
-    alert("No JAR files downloaded. The browser may be blocking file downloads. A backend is needed.");
-    $("search").disabled = false;
-    $("download").disabled = false;
-    return;
-  }
-
-  zip.file("README.txt", readme.join("\n"));
-  $("count").textContent = "Creating ZIP...";
-
-  try {
-    const blob = await zip.generateAsync({
-      type: "blob",
-      compression: "DEFLATE",
-      compressionOptions: {level: 2}
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = safeName($("filename").value || "SpookyCraft.zip");
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-    $("count").textContent = `ZIP created with ${ok} JAR files.`;
-    say("ZIP download started.");
-  } catch (e) {
-    alert("ZIP creation failed: " + e.message);
-  }
-
-  $("search").disabled = false;
-  $("download").disabled = false;
-};
-</script>
-</body>
-  </html>
-  
+(()=>{const $=id=>document.getElementById(id);let source='modrinth',found=[],selected=new Set();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function status(t){$('status').textContent=t}
+function choose(s){source=s;$('mr').classList.toggle('active',s==='modrinth');$('cf').classList.toggle('active',s==='curseforge');$('cfBox').hidden=s!=='curseforge';$('hint').textContent=s==='modrinth'?'Modrinth يعمل مباشرةً باستخدام API العام.':'CurseForge يحتاج Worker آمن ومفتاح API معتمداً محفوظاً على الخادم.';status('المصدر الحالي: '+(s==='modrinth'?'Modrinth':'CurseForge'))}
+$('mr').onclick=()=>choose('modrinth');$('cf').onclick=()=>choose('curseforge');
+function actions(){$('open').disabled=!selected.size;$('export').disabled=!selected.size;$('count').textContent=`${found.length} نتيجة · ${selected.size} محدد`}
+function render(){if(!found.length){$('results').innerHTML='<div class="empty">ماكو نتائج. جرّب كلمة ثانية أو إصداراً آخر.</div>';actions();return}
+$('results').innerHTML=found.map(m=>`<article class="result"><img src="${esc(m.icon)}" alt="" onerror="this.style.visibility='hidden'"><div class="meta"><h3>${esc(m.name)}</h3><p>${esc(m.summary)}</p><p>${esc(m.author)} · ${Number(m.downloads||0).toLocaleString()} downloads</p><div>${(m.versions||[]).slice(0,4).map(v=>`<span class="pill">${esc(v)}</span>`).join('')}</div><a href="${esc(m.url)}" target="_blank" rel="noopener">صفحة المود الرسمية ↗</a></div><input type="checkbox" aria-label="تحديد المود" data-key="${esc(m.key)}" ${selected.has(m.key)?'checked':''}></article>`).join('');
+$('results').querySelectorAll('input[type=checkbox]').forEach(c=>c.onchange=()=>{c.checked?selected.add(c.dataset.key):selected.delete(c.dataset.key);actions()});actions()}
+async function modrinth(q,v,l){const facets=[['project_type:mod']];if(v)facets.push([`versions:${v}`]);if(l!=='any')facets.push([`categories:${l}`]);const p=new URLSearchParams({query:q,limit:'30',index:'relevance',facets:JSON.stringify(facets)});const r=await fetch('https://api.modrinth.com/v2/search?'+p);if(!r.ok)throw Error('Modrinth API: '+r.status);const d=await r.json();return(d.hits||[]).map(m=>({key:'mr:'+m.project_id,name:m.title,summary:m.description,author:m.author,downloads:m.downloads,icon:m.icon_url,url:'https://modrinth.com/mod/'+(m.slug||m.project_id),versions:m.versions||[]}))}
+async function curse(q,v,l){const raw=$('proxy').value.trim();if(!raw)throw Error('أدخل رابط Worker الوسيط أولاً؛ لا تضع API Key هنا.');const u=new URL(raw);u.searchParams.set('query',q);u.searchParams.set('gameVersion',v);u.searchParams.set('loader',l);const r=await fetch(u,{headers:{Accept:'application/json'}});if(!r.ok)throw Error('Worker: '+r.status);const d=await r.json(),arr=Array.isArray(d.data)?d.data:Array.isArray(d)?d:[];return arr.map(m=>({key:'cf:'+m.id,name:m.name,summary:m.summary||m.description||'',author:m.authors?.[0]?.name||m.author||'',downloads:m.downloadCount||0,icon:m.logo?.url||'',url:m.links?.website||'https://www.curseforge.com/minecraft/mc-mods/'+(m.slug||''),versions:m.gameVersions||[]}))}
+async function search(){const q=$('query').value.trim(),v=$('version').value.trim(),l=$('loader').value;if(!q){status('اكتب اسم المود أولاً.');return}$('search').disabled=true;$('search').textContent='جاري البحث…';status('جاري البحث…');$('results').innerHTML='<div class="empty">جاري تحميل النتائج…</div>';try{found=source==='modrinth'?await modrinth(q,v,l):await curse(q,v,l);render();status(found.length?`تم العثور على ${found.length} نتيجة.`:'ما لقينا نتائج مطابقة.')}catch(e){found=[];render();status('تعذّر البحث: '+e.message)}finally{$('search').disabled=false;$('search').textContent='بحث'}}
+$('search').onclick=search;$('query').onkeydown=e=>{if(e.key==='Enter')search()};$('open').onclick=()=>found.filter(m=>selected.has(m.key)).forEach(m=>window.open(m.url,'_blank','noopener'));
+$('export').onclick=()=>{const text=found.filter(m=>selected.has(m.key)).map(m=>`${m.name}\n${m.url}\nSource: ${m.key.split(':')[0]}`).join('\n\n');const a=document.createElement('a');const u=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));a.href=u;a.download='SpookyCraft-selected-mods.txt';a.click();URL.revokeObjectURL(u)};
+$('clear').onclick=()=>{selected.clear();render()};choose('modrinth')})();
+</script></body></html>
