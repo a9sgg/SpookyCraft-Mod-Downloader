@@ -1,44 +1,85 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SpookyCraft Mod Downloader</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111318">
+<title>SpookyCraft | Mod Search</title>
 <style>
-:root{color-scheme:dark;--bg:#101116;--panel:#1a1c25;--line:#303342;--text:#f5f5f7;--muted:#a9adbd;--accent:#ffb52e;--orange:#ff7b27}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#302238,#101116 58%);font-family:system-ui,sans-serif;color:var(--text);min-height:100vh}
-header{text-align:center;padding:32px 14px 20px}.logo{width:68px;height:68px;margin:auto auto 12px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(140deg,var(--accent),var(--orange));color:#211509;font-size:36px;font-weight:950}h1{margin:0;font-size:clamp(26px,5vw,42px)}h1 span{color:var(--accent)}header p{color:var(--muted);max-width:650px;margin:10px auto}
-main{width:min(950px,calc(100% - 24px));margin:auto auto 45px}.panel{background:#1a1c25ed;border:1px solid var(--line);border-radius:18px;padding:17px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:7px}.field label{font-size:13px;font-weight:700;color:#d5d7e1}
-input,select{width:100%;min-width:0;border:1px solid #3b3e50;background:#11131a;color:var(--text);padding:12px;border-radius:11px;font:inherit}button{border:0;border-radius:11px;padding:12px 15px;background:linear-gradient(120deg,var(--accent),var(--orange));color:#241608;font:inherit;font-weight:900;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
-.sources{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.source{background:#11131a;color:var(--text);border:1px solid var(--line)}.source.active{border-color:var(--accent);background:#ffb52e16;color:var(--accent)}.searchbar{display:flex;gap:9px;margin-top:14px}.searchbar input{flex:1}.hint,.status{font-size:13px;color:var(--muted);line-height:1.6}.status{margin-top:12px}.results-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.results{display:grid;gap:10px;margin-top:14px}.result{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:13px;background:#11131a}.result img{width:46px;height:46px;border-radius:10px;object-fit:cover;background:#242631}.meta{flex:1;min-width:0}.result h3{font-size:15px;margin:0 0 4px;overflow-wrap:anywhere}.result p{font-size:12px;color:var(--muted);margin:0;line-height:1.5}.result a{color:var(--accent);font-size:12px;text-decoration:none}.result input[type=checkbox]{width:19px;height:19px;accent-color:var(--accent);flex:0 0 auto}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:3px 8px;font-size:11px;margin:4px 3px 0 0}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.secondary{background:#292c39;color:var(--text);border:1px solid var(--line)}.empty{text-align:center;padding:25px;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:12px;padding:0 15px 25px}
-@media(max-width:560px){.grid{grid-template-columns:1fr}.panel{padding:13px}.searchbar{flex-direction:column}.result{align-items:flex-start}.result img{width:40px;height:40px}}
-</style></head>
-<body>
-<header><div class="logo">S</div><h1><span>SpookyCraft</span> Mod Downloader</h1><p>ابحث عن مودات Minecraft حسب المصدر وإصدار اللعبة والـLoader، وحدد المودات واحفظ قائمة بها.</p></header>
-<main>
+:root{color-scheme:dark;--bg:#101116;--panel:#191b23;--line:#30323d;--text:#f5f5f7;--muted:#a8abb8;--orange:#ff9b32;--orange2:#ff6b24}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#29202a 0,#101116 50%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:1050px;margin:auto;padding:24px 16px 50px}.hero{text-align:center;padding:28px 12px 24px}.logo{display:inline-grid;place-items:center;width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:#161116;font-weight:1000;font-size:28px;box-shadow:0 10px 36px #ff7b2430}.hero h1{font-size:clamp(28px,5vw,44px);margin:14px 0 6px;letter-spacing:.3px}.hero h1 span{color:var(--orange)}.hero p{color:var(--muted);margin:0}
+.panel{background:#191b23ed;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 18px 55px #0003}.sources{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.source{border:1px solid var(--line);border-radius:13px;padding:13px;background:#111318;color:var(--text);font-weight:800;cursor:pointer}.source.active{border-color:var(--orange);background:#ff9b3215;color:#ffc078}.fieldgrid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}.field label{display:block;color:var(--muted);font-size:13px;margin:0 0 7px}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px;background:#101116;color:var(--text);font:inherit;min-width:0}.actions{display:flex;gap:10px;margin-top:14px}.btn{border:0;border-radius:12px;padding:12px 17px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:#1b1110;font-weight:900;cursor:pointer;font:inherit}.btn:disabled{opacity:.55;cursor:wait}.secondary{background:#272a34;color:var(--text);border:1px solid var(--line)}.status{margin:14px 2px 0;color:var(--muted);font-size:14px;min-height:22px}.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:18px}.card{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:14px;display:flex;gap:12px;min-width:0}.icon{width:54px;height:54px;flex:0 0 54px;border-radius:13px;object-fit:cover;background:#292b35}.info{min-width:0;flex:1}.info h3{font-size:16px;margin:0 0 5px;overflow-wrap:anywhere}.desc{font-size:13px;color:var(--muted);line-height:1.45;margin:0 0 9px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.meta{font-size:12px;color:#c8c9d2;margin-bottom:10px}.link{display:inline-block;color:#ffc078;text-decoration:none;font-weight:750;font-size:13px}.link:hover{text-decoration:underline}.note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:18px}.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px;border:1px dashed var(--line);border-radius:14px}.foot{text-align:center;color:#777b88;font-size:12px;margin-top:22px}
+@media(max-width:650px){.fieldgrid{grid-template-columns:1fr 1fr}.field.search{grid-column:1/-1}.actions .btn{flex:1}.wrap{padding:14px 11px 35px}.panel{padding:13px}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="hero"><div class="logo">SC</div><h1><span>Spooky</span>Craft</h1><p>ابحث عن مودات Minecraft من المصادر الرسمية</p></header>
 <section class="panel">
-<div class="sources"><button class="source active" id="mr" type="button">Modrinth</button><button class="source" id="cf" type="button">CurseForge</button></div>
-<div class="grid">
-<div class="field"><label for="version">إصدار Minecraft</label><input id="version" list="versions" value="1.21.11" placeholder="مثال 1.21.11"><datalist id="versions"><option>1.21.11</option><option>1.21.10</option><option>1.21.8</option><option>1.21.5</option><option>1.20.1</option><option>1.19.2</option></datalist></div>
-<div class="field"><label for="loader">Mod Loader</label><select id="loader"><option value="fabric">Fabric</option><option value="forge">Forge</option><option value="neoforge">NeoForge</option><option value="quilt">Quilt</option><option value="any">الكل / غير محدد</option></select></div></div>
-<div class="searchbar"><input id="query" placeholder="اسم المود مثل Sodium أو Jade"><button id="search">بحث</button></div><div id="status" class="status">اختار المصدر وإصدار اللعبة ثم ابحث.</div><p class="hint" id="hint">Modrinth يعمل مباشرةً باستخدام API العام.</p>
+<div class="sources" role="group" aria-label="مصدر البحث">
+<button class="source active" id="mrBtn" type="button">Modrinth <small>بحث مباشر</small></button>
+<button class="source" id="cfBtn" type="button">CurseForge <small>عبر Worker</small></button>
+</div>
+<div class="fieldgrid">
+<div class="field search"><label for="query">اسم المود</label><input id="query" placeholder="مثال: Sodium, Iris, JEI" value="Sodium"></div>
+<div class="field"><label for="version">إصدار Minecraft</label><select id="version"></select></div>
+<div class="field"><label for="loader">اللودر</label><select id="loader"><option value="fabric">Fabric</option><option value="forge">Forge</option><option value="neoforge">NeoForge</option><option value="quilt">Quilt</option><option value="any">كل اللودرات</option></select></div>
+</div>
+<div class="actions"><button class="btn" id="searchBtn">🔎 ابحث عن المودات</button><button class="btn secondary" id="clearBtn" type="button">مسح</button></div>
+<div id="status" class="status" aria-live="polite">اختار المصدر والإصدار واضغط بحث.</div>
 </section>
-<section class="panel"><div class="results-head"><strong>نتائج البحث</strong><span id="count" class="hint">0 نتيجة</span></div><div id="results" class="results"><div class="empty">نتائج البحث تظهر هنا.</div></div><div class="actions"><button id="open" disabled>فتح صفحات المحددة</button><button id="export" class="secondary" disabled>تصدير قائمة الأسماء</button><button id="clear" class="secondary">مسح التحديد</button></div><p class="hint">التنزيل يفتح صفحة المشروع الرسمية. الموقع لا يتجاوز صلاحيات المؤلفين ولا يضمّن مفاتيح سرية.</p></section>
-<section class="panel" id="cfBox" hidden><strong>ربط CurseForge</strong><p class="hint">CurseForge API يحتاج مفتاحاً معتمداً. لا تضع المفتاح داخل index.html العام. اربط الموقع بوسيط آمن مثل Cloudflare Worker يخزن المفتاح كـ Secret.</p><div class="field"><label for="proxy">رابط Worker الوسيط</label><input id="proxy" type="url" placeholder="https://your-worker.example.workers.dev/search"></div><p class="hint">الوسيط يستقبل query وgameVersion وloader ويعيد JSON بالشكل {data:[{id,name,summary,logo:{url},links:{website},downloadCount}]}. لازم يطبّق فلاتر اللعبة والـLoader باستخدام API الرسمي.</p></section>
-</main><footer>SpookyCraft by Awsy</footer>
+<section id="results" class="results" aria-live="polite"></section>
+<p class="note">الموقع يعرض نتائج البحث وروابط صفحات المودات الأصلية. تنزيل الملفات يتم من المصدر نفسه. بحث CurseForge يحتاج Worker منشور ومفتاح API صالح محفوظ كـ Secret؛ لا تضع مفتاح API داخل هذا الملف.</p>
+<div class="foot">SpookyCraft Mod Search · Community tool, not affiliated with Modrinth or CurseForge.</div>
+</main>
 <script>
-(()=>{const $=id=>document.getElementById(id);let source='modrinth',found=[],selected=new Set();
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function status(t){$('status').textContent=t}
-function choose(s){source=s;$('mr').classList.toggle('active',s==='modrinth');$('cf').classList.toggle('active',s==='curseforge');$('cfBox').hidden=s!=='curseforge';$('hint').textContent=s==='modrinth'?'Modrinth يعمل مباشرةً باستخدام API العام.':'CurseForge يحتاج Worker آمن ومفتاح API معتمداً محفوظاً على الخادم.';status('المصدر الحالي: '+(s==='modrinth'?'Modrinth':'CurseForge'))}
-$('mr').onclick=()=>choose('modrinth');$('cf').onclick=()=>choose('curseforge');
-function actions(){$('open').disabled=!selected.size;$('export').disabled=!selected.size;$('count').textContent=`${found.length} نتيجة · ${selected.size} محدد`}
-function render(){if(!found.length){$('results').innerHTML='<div class="empty">ماكو نتائج. جرّب كلمة ثانية أو إصداراً آخر.</div>';actions();return}
-$('results').innerHTML=found.map(m=>`<article class="result"><img src="${esc(m.icon)}" alt="" onerror="this.style.visibility='hidden'"><div class="meta"><h3>${esc(m.name)}</h3><p>${esc(m.summary)}</p><p>${esc(m.author)} · ${Number(m.downloads||0).toLocaleString()} downloads</p><div>${(m.versions||[]).slice(0,4).map(v=>`<span class="pill">${esc(v)}</span>`).join('')}</div><a href="${esc(m.url)}" target="_blank" rel="noopener">صفحة المود الرسمية ↗</a></div><input type="checkbox" aria-label="تحديد المود" data-key="${esc(m.key)}" ${selected.has(m.key)?'checked':''}></article>`).join('');
-$('results').querySelectorAll('input[type=checkbox]').forEach(c=>c.onchange=()=>{c.checked?selected.add(c.dataset.key):selected.delete(c.dataset.key);actions()});actions()}
-async function modrinth(q,v,l){const facets=[['project_type:mod']];if(v)facets.push([`versions:${v}`]);if(l!=='any')facets.push([`categories:${l}`]);const p=new URLSearchParams({query:q,limit:'30',index:'relevance',facets:JSON.stringify(facets)});const r=await fetch('https://api.modrinth.com/v2/search?'+p);if(!r.ok)throw Error('Modrinth API: '+r.status);const d=await r.json();return(d.hits||[]).map(m=>({key:'mr:'+m.project_id,name:m.title,summary:m.description,author:m.author,downloads:m.downloads,icon:m.icon_url,url:'https://modrinth.com/mod/'+(m.slug||m.project_id),versions:m.versions||[]}))}
-async function curse(q,v,l){const raw=$('proxy').value.trim();if(!raw)throw Error('أدخل رابط Worker الوسيط أولاً؛ لا تضع API Key هنا.');const u=new URL(raw);u.searchParams.set('query',q);u.searchParams.set('gameVersion',v);u.searchParams.set('loader',l);const r=await fetch(u,{headers:{Accept:'application/json'}});if(!r.ok)throw Error('Worker: '+r.status);const d=await r.json(),arr=Array.isArray(d.data)?d.data:Array.isArray(d)?d:[];return arr.map(m=>({key:'cf:'+m.id,name:m.name,summary:m.summary||m.description||'',author:m.authors?.[0]?.name||m.author||'',downloads:m.downloadCount||0,icon:m.logo?.url||'',url:m.links?.website||'https://www.curseforge.com/minecraft/mc-mods/'+(m.slug||''),versions:m.gameVersions||[]}))}
-async function search(){const q=$('query').value.trim(),v=$('version').value.trim(),l=$('loader').value;if(!q){status('اكتب اسم المود أولاً.');return}$('search').disabled=true;$('search').textContent='جاري البحث…';status('جاري البحث…');$('results').innerHTML='<div class="empty">جاري تحميل النتائج…</div>';try{found=source==='modrinth'?await modrinth(q,v,l):await curse(q,v,l);render();status(found.length?`تم العثور على ${found.length} نتيجة.`:'ما لقينا نتائج مطابقة.')}catch(e){found=[];render();status('تعذّر البحث: '+e.message)}finally{$('search').disabled=false;$('search').textContent='بحث'}}
-$('search').onclick=search;$('query').onkeydown=e=>{if(e.key==='Enter')search()};$('open').onclick=()=>found.filter(m=>selected.has(m.key)).forEach(m=>window.open(m.url,'_blank','noopener'));
-$('export').onclick=()=>{const text=found.filter(m=>selected.has(m.key)).map(m=>`${m.name}\n${m.url}\nSource: ${m.key.split(':')[0]}`).join('\n\n');const a=document.createElement('a');const u=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));a.href=u;a.download='SpookyCraft-selected-mods.txt';a.click();URL.revokeObjectURL(u)};
-$('clear').onclick=()=>{selected.clear();render()};choose('modrinth')})();
+(() => {
+ const $ = id => document.getElementById(id);
+ let source = 'modrinth';
+ const versions = [
+ '1.20','1.20.1','1.20.2','1.20.3','1.20.4','1.20.5','1.20.6',
+ '1.21','1.21.1','1.21.2','1.21.3','1.21.4','1.21.5','1.21.6','1.21.7','1.21.8','1.21.9','1.21.10','1.21.11',
+ '26.0','26.1','26.2','26.3'
+ ];
+ versions.forEach(v => { const o=document.createElement('option');o.value=v;o.textContent=v;$('version').appendChild(o); });
+ $('version').value='1.21.11';
+ const setSource = s => {source=s;$('mrBtn').classList.toggle('active',s==='modrinth');$('cfBtn').classList.toggle('active',s==='curseforge');$('status').textContent=s==='modrinth'?'بحث مباشر باستخدام Modrinth API.':'يتطلب رابط Worker المنشور في إعدادات الكود أدناه.';};
+ $('mrBtn').onclick=()=>setSource('modrinth');$('cfBtn').onclick=()=>setSource('curseforge');
+ const escapeHtml = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function card(item){return `<article class="card"><img class="icon" src="${escapeHtml(item.icon||'')}" alt="" onerror="this.style.visibility='hidden'"><div class="info"><h3>${escapeHtml(item.title)}</h3><p class="desc">${escapeHtml(item.description||'لا يوجد وصف')}</p><div class="meta">${escapeHtml(item.author||'')} · ${Number(item.downloads||0).toLocaleString()} downloads</div><a class="link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">فتح صفحة المود ↗</a></div></article>`}
+ function render(items){$('results').innerHTML=items.length?items.map(card).join(''):'<div class="empty">ما حصلت نتائج مطابقة. جرّب اسم ثاني أو إصدار مختلف.</div>';}
+ async function search(){
+  const q=$('query').value.trim(), v=$('version').value, loader=$('loader').value;
+  if(!q){$('status').textContent='اكتب اسم مود أولاً.';return;}
+  $('searchBtn').disabled=true;$('status').textContent='جاري البحث…';$('results').innerHTML='';
+  try{
+   let items=[];
+   if(source==='modrinth'){
+    const params=new URLSearchParams({query:q,limit:'30',index:'relevance'});
+    const facets=[['project_type:mod']];
+    if(v)facets.push([`versions:${v}`]);
+    if(loader!=='any')facets.push([`categories:${loader}`]);
+    params.set('facets',JSON.stringify(facets));
+    const res=await fetch('https://api.modrinth.com/v2/search?'+params.toString(),{headers:{'User-Agent':'a9sgg/SpookyCraft-Mod-Downloader/1.0 (GitHub Pages)'}});
+    if(!res.ok)throw new Error(`Modrinth API returned HTTP ${res.status}`);
+    const data=await res.json();
+    items=(data.hits||[]).map(x=>({title:x.title,description:x.description,author:x.author,downloads:x.downloads,icon:x.icon_url,url:'https://modrinth.com/mod/'+(x.slug||x.project_id)}));
+   }else{
+    // Deploy worker.js and put its URL here. The browser never receives the CurseForge API key.
+    const CURSEFORGE_WORKER_URL = '';
+    if(!CURSEFORGE_WORKER_URL)throw new Error('CurseForge يحتاج نشر worker.js على Cloudflare ثم وضع رابط Worker داخل CURSEFORGE_WORKER_URL في index.html.');
+    const params=new URLSearchParams({query:q,version:v,loader});
+    const res=await fetch(CURSEFORGE_WORKER_URL+'?'+params.toString());
+    if(!res.ok)throw new Error(`CurseForge Worker returned HTTP ${res.status}`);
+    const data=await res.json();
+    items=(data.data||data||[]).map(x=>({title:x.name||x.title,description:x.summary||x.description,author:x.authors?.[0]?.name||x.author||'CurseForge',downloads:x.downloadCount||x.downloads,icon:x.logo?.url||x.icon||'',url:x.links?.websiteUrl||x.url||('https://www.curseforge.com/minecraft/mc-mods/'+x.slug)}));
+   }
+   render(items);$('status').textContent=`تم العثور على ${items.length} نتيجة من ${source==='modrinth'?'Modrinth':'CurseForge'}.`;
+  }catch(e){$('status').textContent='فشل البحث: '+e.message;$('results').innerHTML='<div class="empty">تعذر الاتصال أو إعداد المصدر غير مكتمل. تأكد من الإنترنت وإعدادات Worker.</div>';}
+  finally{$('searchBtn').disabled=false;}
+ }
+ $('searchBtn').addEventListener('click',search);
+ $('query').addEventListener('keydown',e=>{if(e.key==='Enter')search();});
+ $('clearBtn').onclick=()=>{$('query').value='';$('results').innerHTML='';$('status').textContent='اكتب اسم مود ثم اضغط بحث.';};
+})();
 </script></body></html>
